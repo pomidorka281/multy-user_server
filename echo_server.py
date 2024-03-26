@@ -17,7 +17,7 @@ def client_thread(con):
 server = socket.socket()
 
 server.bind(('', 9090))
-server.listen(5)
+server.listen()
 count_users = 0
 
 while True:
