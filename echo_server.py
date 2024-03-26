@@ -1,5 +1,6 @@
 import socket
 import threading
+import os
 
 
 def client_thread(con):
@@ -9,9 +10,24 @@ def client_thread(con):
         if not data or data.decode() == 'close':
             con.close()
             break
+        elif data.decode() == 'update':
+            tasklist(con)
         else:
             print('data has been recieved')
             con.send(data)
+
+
+def tasklist(con):
+    if os.name == 'posix':
+        taskstr = os.popen('ps -e').read()
+    else:
+        taskstr = os.popen('tasklist').read()
+    taskstr = taskstr.encode('cp1251').decode('cp866')
+    con.send(str(len(taskstr)).encode())
+    while True:
+        if con.recv(1024) == b'pass':
+            break
+    con.send(taskstr.encode())
 
 
 server = socket.socket()
