@@ -5,6 +5,7 @@ import json
 
 DATA_RECEIVE_BYTE_SIZE = 2**10
 
+
 def client_thread(con):
     while True:
         data = con.recv(1024)
@@ -14,6 +15,8 @@ def client_thread(con):
             break
         elif data.decode() == 'update':
             tasklist(con)
+        elif data.decode() == 'get_info':
+            file_info_f(con, os.getcwd())
         else:
             print('data has been recieved')
             con.send(data)
@@ -31,6 +34,17 @@ def tasklist(con):
             break
     con.send(taskstr.encode())
 
+
+def file_info_f(client_socket, current_dir=os.getcwd()):
+    file_info = get_file_info(current_dir)
+    save_to_json(file_info, 'directory_info.json')
+
+    with open('directory_info.json', 'rb') as f:
+        data = f.read()
+        client_socket.send(str(len(data)).encode())
+        client_socket.send(data)
+
+
 def get_file_info(path = os.getcwd()):
     file_info = {}
 
@@ -47,6 +61,7 @@ def get_file_info(path = os.getcwd()):
     file_info['name'] = os.path.basename(path)
     file_info['path'] = path
     return file_info
+
 
 def save_to_json(file_info, output_file):
     with open(output_file, 'w', encoding='UTF-8') as f:
