@@ -47,7 +47,6 @@ def get_file_info(path = os.getcwd()):
     file_info['path'] = path
     return file_info
 
-
 server = socket.socket()
 
 server.bind(('', 9090))
