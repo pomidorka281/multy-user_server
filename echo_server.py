@@ -1,6 +1,7 @@
 import socket
 import threading
 import os
+import json
 
 DATA_RECEIVE_BYTE_SIZE = 2**10
 
@@ -46,6 +47,11 @@ def get_file_info(path = os.getcwd()):
     file_info['name'] = os.path.basename(path)
     file_info['path'] = path
     return file_info
+
+def save_to_json(file_info, output_file):
+    with open(output_file, 'w', encoding='UTF-8') as f:
+        json.dump(file_info, f, indent=4, ensure_ascii=False)
+
 
 server = socket.socket()
 
